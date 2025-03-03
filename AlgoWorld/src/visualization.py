@@ -12,18 +12,18 @@ def fbm_altitude(
     total_value = np.zeros_like(xx, dtype=np.float32)
 
     for o in range(octaves):
-        gain = amplitude * (lacunarity ** (-h * o))  # Calcul du gain
+        gain = amplitude * (lacunarity ** (-h * o))
         total_value += gain * np.vectorize(noise.pnoise2)(
             f * xx, f * yy
-        )  # Vectorisation
-        f *= lacunarity  # Incrémentation de la fréquence
+        )
+        f *= lacunarity
 
     return total_value + offset
 
 
 def normalize(x):
     """Normalise la heightmap entre 0 et 1"""
-    x = x.astype(np.float32)  # Optimisation mémoire
+    x = x.astype(np.float32)
     x -= x.min()
     x /= x.max()
     return x
@@ -47,10 +47,8 @@ def generate_minecraft_heightmap(
     )
     heightmap = normalize(heightmap)
 
-    # Ajuste la taille des blocs Minecraft
     heightmap = np.round(heightmap * block_scale)
 
-    # Limite les hauteurs entre 0 et 256
     heightmap = np.clip(heightmap, 0, 256)
 
     return heightmap.astype(np.uint8)
@@ -63,7 +61,6 @@ def plot_minecraft_terrain(heightmap):
 
     x, y = np.meshgrid(np.arange(heightmap.shape[0]), np.arange(heightmap.shape[1]))
 
-    # Transformation des données en 1D pour bar3d
     x, y, z = x.ravel(), y.ravel(), heightmap.ravel()
 
     ax.bar3d(x, y, np.zeros_like(z), 1, 1, z, shade=True, cmap="terrain")
